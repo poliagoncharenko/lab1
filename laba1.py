@@ -4,25 +4,26 @@ import random
 
 with open ('books.csv', 'r') as f:
     f_csv = csv.reader(f, delimiter=";")
-    count30 = 0
-    books = []
-    bookss = []
-    c = 0
-    for x in f_csv:
-        c += 1
-        if c > 1:
-            books.append(x)
-    for x in books:
-        if len(x[1]) > 30:
-            count30 += 1
-    print('Количество записей', len(books) + 1)
-    print('Количество записей, у которых в поле Название строка длиннее 30 символов.', count30)
+    num_long_titles = 0
+    books = list(f_csv)
+    books_after_2018 = []
+    count_books = len(books)
+    for book in books:
+        if len(book[1]) > 30:
+            num_long_titles += 1
+    print(f'Количество записей {len(books) + 1}')
+    print(f'Количество записей, у которых в поле Название строка длиннее 30 символов.{num_long_titles}')
     request = input('Введите автора ')
-    for x in books:
-        if (x[3] == request or x[4] == request) and ('2018' in x[6] or '2019' in x[6] or '2020' in x[6] or '2021' in x[6] or '2022' in x[6] or '2023' in x[6]):
-            bookss.append(x)
-    print(f'Книги {request} от 2018 года: {bookss}')
-    with open('generator.txt', 'w') as g:
+    for book in books:
+        name = book[3]
+        full_name = book[4]
+        book_year = book[6].split('.')[-1][:4]
+        years_range = [str(year) for year in range(2018, 2024)]
+        if (request in [name, full_name]) and (book_year in years_range):
+            books_after_2018.append(book)
+    print(f'Книги {request} от 2018 года: {books_after_2018}')
+    with open('generator.txt', 'w') as generator_books:
         for i in range(20):
             num = random.randint(0, len(books))
-            g.write(f'{num}){books[num][3]}. {books[num][1]} - {books[num][6]}\n')
+            author = books[num][3]
+            generator_books.write(f'{num}){author}. {books[num][1]} - {books[num][6]}\n')
